@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="uk"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Field Mixer 8</title>
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#111214"><meta name="apple-mobile-web-app-title" content="Field Mixer">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+:root{color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html{height:100dvh}
+body{margin:0;height:100%;display:flex;flex-direction:column;background:#17181a;color:#ddd;font:14px -apple-system,system-ui,sans-serif;user-select:none;-webkit-user-select:none;overflow:hidden;padding:0 env(safe-area-inset-right,0px) 0 env(safe-area-inset-left,0px)}
+#lcd{flex:none;margin:6px;background:#06141d;border:3px solid #000;border-radius:6px;padding:8px 10px;color:#bfe6ff;font-family:ui-monospace,Menlo,monospace;box-shadow:inset 0 0 18px #000,0 0 0 2px #2b2e33}
+.l1{display:flex;justify-content:space-between;font-size:12px;color:#7fb4d6}
+#tc{font:700 clamp(34px,12vw,56px)/1.05 ui-monospace,Menlo,monospace;letter-spacing:.03em;color:#e6f6ff}
+.l2{display:flex;justify-content:space-between;font-size:12px;margin:2px 0 6px}#st{color:#ff6b61;font-weight:700}
+#mts{display:flex;gap:4px;height:64px}
+.mb{flex:1;position:relative;background:#02080c;border:1px solid #1d3646;text-align:center}
+.mb i{position:absolute;inset:0;background:linear-gradient(to top,#35e05a 0 70%,#ffd60a 70% 90%,#ff3b30 90%);clip-path:inset(100% 0 0 0)}
+.mb u{position:absolute;bottom:-14px;left:0;right:0;font:10px monospace;text-decoration:none;color:#7fb4d6}
+#tp{flex:none;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:0 6px;margin-top:8px}
+button,select{background:linear-gradient(#3a3d42,#26282c);color:#ddd;border:1px solid #000;border-radius:6px;font:inherit}
+#tp button{min-height:48px;font:700 12px sans-serif;letter-spacing:.06em}#tp button i{display:block;font-style:normal;font-size:16px}
+#rec{color:#ff5a4d}#rec.on{background:#8a1a14;color:#fff}#bMon.on{background:#2a5a88;color:#fff}
+#scr{flex:1;overflow-y:auto;padding:8px 6px}
+h4{margin:2px 0 8px;font-size:12px;letter-spacing:.15em;color:#8a9199}
+.tg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.tg button{min-height:54px;font-weight:700}.tg small{display:block;font-size:10px;color:#9aa}
+.on{background:#d98a00!important;color:#000!important}
+.ic{background:#212327;border:1px solid #000;border-radius:8px;padding:8px;margin-bottom:8px}
+.ic b{color:#ffb000}.ic input{width:100%;margin:6px 0}
+.r2{display:flex;gap:6px}.r2 select{flex:1;padding:8px}.r2 button{width:56px}
+.rt{display:grid;grid-template-columns:repeat(8,1fr);gap:3px;margin-top:6px}.rt button{padding:8px 0;font-size:12px}
+.mi{display:flex;justify-content:space-between;gap:8px;padding:12px 10px;border-bottom:1px solid #2b2e33}.mi span:last-child{color:#7fcfff;text-align:right}
+.fi{background:#212327;border-radius:8px;padding:10px;margin-bottom:8px}.fi button{width:100%;padding:10px;margin-top:6px}
+nav{flex:none;display:grid;grid-template-columns:repeat(5,1fr);background:#0c0d0e;border-top:1px solid #000}
+nav button{border:0;border-radius:0;background:none;padding:12px 0;font-weight:700;letter-spacing:.03em;font-size:11px}nav button.on{background:none!important;color:#ffb000!important;border-top:2px solid #ffb000}
+#cam{display:none;margin:6px;position:relative;background:#000;border-radius:8px;overflow:hidden;aspect-ratio:16/9;flex:none}
+#cam video{width:100%;height:100%;object-fit:cover;display:block}
+#co{position:absolute;inset:0;pointer-events:none;font:700 12px ui-monospace,monospace;color:#fff;text-shadow:0 0 3px #000}
+#co span{position:absolute}#gr{inset:0;display:none;background:linear-gradient(#fff8,#fff8) 33.3% 0/1px 100% no-repeat,linear-gradient(#fff8,#fff8) 66.6% 0/1px 100% no-repeat,linear-gradient(#fff8,#fff8) 0 33.3%/100% 1px no-repeat,linear-gradient(#fff8,#fff8) 0 66.6%/100% 1px no-repeat}
+.cs{margin:8px 0}.cs label{display:flex;justify-content:space-between;color:#9aa;font-size:12px}.cs input{width:100%}
+#start{position:fixed;inset:0;background:#17181a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:9;text-align:center;padding:24px;color:#9aa}
+#start button{background:#ff9f1c;color:#000;font:700 18px sans-serif;padding:14px 30px;border:0}
+</style></head><body>
+<div id="start"><b style="letter-spacing:.25em;color:#eee">FIELD MIXER 8</b><span>8 входів · polywav 16/24 bit · BWF-таймкод · iXML</span><button id="go">Запустити</button><span id="err"></span></div>
+<div id="lcd"><div class="l1"><span id="tcm">—</span><span id="inf">—</span></div><div id="tc">00:00:00:00</div>
+<div class="l2"><span id="nx">—</span><span id="st">STOP</span></div><div id="mts"></div><div style="height:12px"></div></div>
+<div id="tp"><button id="bStop"><i>■</i>STOP</button><button id="rec"><i>●</i>REC</button><button id="bPause"><i>❚❚</i>PAUSE</button><button id="bMon"><i>🎧</i>MON</button></div>
+<div id="cam"><video id="vid" playsinline muted autoplay></video><div id="co"><span id="co1" style="left:8px;top:6px"></span><span id="co2" style="right:8px;top:6px"></span><span id="gr"></span></div></div>
+<div id="scr"></div>
+<nav><button data-t="main" class="on">MAIN</button><button data-t="inp">INPUTS</button><button data-t="cam">CAM</button><button data-t="menu">MENU</button><button data-t="files">FILES</button></nav>
+<script>
+const $=id=>document.getElementById(id),P=(n,l=2)=>String(n).padStart(l,"0"),esc=s=>String(s).replace(/[<>&]/g,"");
+const FD={"23.976":[24,23.976,0],"24":[24,24,0],"25":[25,25,0],"29.97":[30,29.97,0],"29.97df":[30,29.97,1],"30":[30,30,0]},FL=Object.keys(FD);
+const TN=["L","R","A","B","C","D","E","F"],HP=[0,40,60,80,100,120,160,200,240,320],MODES={tod:"Time of Day",free:"Free Run",rec:"Rec Run"};
+let cfg={bits:24,prefix:"FM",scene:"1",take:1,fps:"25",mode:"tod",rel:.5,res:1080,vbr:16,face:"environment",grid:0};
+try{Object.assign(cfg,JSON.parse(localStorage.getItem("fm")||"{}"))}catch(e){}
+const sv=()=>{try{localStorage.setItem("fm",JSON.stringify(cfg))}catch(e){}};
+let ctx,stream,N=0,I=[],tarm=[],tab="main",devs=[],tcAcc=0,rec=null,paused=false,files=[],mon,monOn=false,blocks=[],frames=0,tb=[];
+function tcStr(ms){const [nom,rate,df]=FD[cfg.fps];let f=Math.floor(ms/1000*rate);
+ if(df){const d=Math.floor(f/17982),m=f%17982;f+=18*d+(m>2?2*Math.floor((m-2)/1798):0)}
+ return P(Math.floor(f/nom/3600)%24)+":"+P(Math.floor(f/nom/60)%60)+":"+P(Math.floor(f/nom)%60)+(df?";":":")+P(f%nom)}
+function tcMs(){if(cfg.mode==="tod"){const d=new Date();return((d.getHours()*60+d.getMinutes())*60+d.getSeconds())*1000+d.getMilliseconds()}return tcAcc}
+const fname=()=>cfg.prefix+"_"+P(cfg.take,3)+".wav";
+function setIn(i){const c=I[i];c.gn.gain.value=(c.phase?-1:1)*Math.pow(10,c.gain/20);c.hp.frequency.value=c.hpf||5;
+ c.lm.threshold.value=c.lim?-3:0;c.lm.ratio.value=c.lim?20:1;c.lm.knee.value=0;c.lm.attack.value=.002;c.lm.release.value=cfg.rel;
+ c.rg.forEach((g,t)=>g.gain.value=c.route[t]?1:0)}
+async function startAudio(id){
+ if(stream)stream.getTracks().forEach(t=>t.stop());
+ stream=await navigator.mediaDevices.getUserMedia({audio:{deviceId:id?{exact:id}:undefined,channelCount:{ideal:8},echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
+ if(!ctx){ctx=new (window.AudioContext||window.webkitAudioContext)();mon=ctx.createGain();mon.connect(ctx.destination);window.dest=ctx.createMediaStreamDestination();
+  const mg=ctx.createChannelMerger(8),pr=ctx.createScriptProcessor(4096,8,1);pr.channelCount=8;pr.channelCountMode="explicit";pr.channelInterpretation="discrete";
+  tb=TN.map((n,t)=>{const g=ctx.createGain();g.connect(mg,0,t);return g});mg.connect(pr);const z=ctx.createGain();z.gain.value=0;pr.connect(z);z.connect(ctx.destination);
+  [0,1].forEach(t=>{const p=ctx.createStereoPanner();p.pan.value=t?1:-1;tb[t].connect(p);p.connect(mon);p.connect(dest)});
+  pr.onaudioprocess=e=>{if(!rec||paused)return;const A=rec.arm,by=cfg.bits/8,L=e.inputBuffer.length,out=new Uint8Array(L*A.length*by),d=A.map(t=>e.inputBuffer.getChannelData(t));let o=0;
+   for(let s=0;s<L;s++)for(let k=0;k<d.length;k++){let v=d[k][s];v=v>1?1:v<-1?-1:v;
+    if(by===3){const x=Math.round(v*8388607);out[o++]=x&255;out[o++]=(x>>8)&255;out[o++]=(x>>16)&255}else{const x=Math.round(v*32767);out[o++]=x&255;out[o++]=(x>>8)&255}}
+   blocks.push(out);frames+=L}}
+ mon.gain.value=monOn?1:0;await ctx.resume();
+ const tr=stream.getAudioTracks()[0];N=Math.min(8,tr.getSettings().channelCount||1);
+ const sp=ctx.createChannelSplitter(N);ctx.createMediaStreamSource(stream).connect(sp);
+ const old=I;I=[];for(let i=0;i<N;i++){const o=old[i]||{},c={gain:o.gain||0,hpf:o.hpf||0,lim:!!o.lim,phase:!!o.phase,route:o.route||TN.map((n,t)=>t===i)};
+  c.gn=ctx.createGain();c.hp=ctx.createBiquadFilter();c.hp.type="highpass";c.hp.Q.value=.707;c.lm=ctx.createDynamicsCompressor();c.an=ctx.createAnalyser();c.an.fftSize=1024;c.buf=new Float32Array(1024);
+  sp.connect(c.gn,i);c.gn.connect(c.hp);c.hp.connect(c.lm);c.lm.connect(c.an);c.rg=tb.map(g=>{const r=ctx.createGain();c.lm.connect(r);r.connect(g);return r});I.push(c);setIn(i)}
+ if(tarm.length!==8)tarm=TN.map((n,t)=>t<N);
+ devs=(await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind==="audioinput");
+ $("inf").textContent=N+" IN · "+(ctx.sampleRate/1000)+" kHz";R()}
+(function loop(t0){let lt=t0;(function f(t){const dt=t-lt;lt=t;const run=rec&&!paused;
+ if(cfg.mode==="free"||(cfg.mode==="rec"&&run))tcAcc+=dt;
+ $("tc").textContent=tcStr(tcMs());if(tab==="cam"){$("co1").textContent=tcStr(tcMs());$("co2").textContent=(rec&&rec.vr?"● REC  ":"")+cfg.fps.toUpperCase()+" fps"}$("tcm").textContent=cfg.fps.toUpperCase()+" fps · "+MODES[cfg.mode];$("nx").textContent=rec?rec.name:fname();
+ if(rec){const s=Math.floor(frames/ctx.sampleRate),mb=(frames*rec.arm.length*cfg.bits/8/1048576).toFixed(0);$("st").textContent=(paused?"PAUSE ":"REC ")+P(Math.floor(s/60))+":"+P(s%60)+" · "+mb+" MB"}else $("st").textContent="STOP";
+ document.querySelectorAll(".mb i").forEach((el,i)=>{const c=I[i];let p=0;if(c){c.an.getFloatTimeDomainData(c.buf);for(const v of c.buf){const a=Math.abs(v);if(a>p)p=a}}
+  el.style.clipPath="inset("+(100-Math.min(100,Math.max(0,(20*Math.log10(p+1e-5)+60)/60*100)))+"% 0 0 0)"});
+ requestAnimationFrame(f)})(t0)})(performance.now());
+$("mts").innerHTML=TN.map((n,i)=>`<div class="mb"><i></i><u>${i+1}</u></div>`).join("");
+const trLab=t=>I.map((c,i)=>c.route[t]?i+1:"").filter(Boolean).join(",")||"–";
+function tg(t){tarm[t]=!tarm[t];R()}
+function ig(i,v){I[i].gain=+v;setIn(i);$("gv"+i).textContent=(+v).toFixed(1)+" dB"}
+function ih(i,v){I[i].hpf=+v;setIn(i)}
+function il(i){I[i].lim=!I[i].lim;setIn(i);R()}function ip(i){I[i].phase=!I[i].phase;setIn(i);R()}
+function ir(i,t){I[i].route[t]=!I[i].route[t];setIn(i);R()}
+let cs=null,vtr=null,caps={};
+async function camOn(){try{if(cs)cs.getTracks().forEach(t=>t.stop());const h=cfg.res,w=Math.round(h*16/9),fr=FD[cfg.fps][0];
+ cs=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:cfg.face},width:{ideal:w},height:{ideal:h},frameRate:{ideal:fr}},audio:false});
+ vtr=cs.getVideoTracks()[0];caps=vtr.getCapabilities?vtr.getCapabilities():{};$("vid").srcObject=cs;$("vid").play().catch(()=>{})}catch(e){alert("Камера: "+e.message);cs=null}R()}
+function camOff(){if(rec&&rec.vr)return;if(cs)cs.getTracks().forEach(t=>t.stop());cs=null;$("vid").srcObject=null;R()}
+async function cset(k,v){try{const a={};a[k]=+v;if(k==="focusDistance")a.focusMode="manual";if(k==="exposureTime"||k==="iso")a.exposureMode="manual";if(k==="colorTemperature")a.whiteBalanceMode="manual";await vtr.applyConstraints({advanced:[a]});$("cv"+k).textContent=(+v).toFixed(k==="zoom"?1:0)}catch(e){}}
+async function cauto(){try{await vtr.applyConstraints({advanced:[{focusMode:"continuous",exposureMode:"continuous",whiteBalanceMode:"continuous"}]})}catch(e){}}
+async function shv(i){const f=files[i];try{await navigator.share({files:[new File([f.vblob],f.vname,{type:f.vblob.type})]})}catch(e){}}
+const nxt=(a,v)=>a[(a.indexOf(v)+1)%a.length];
+const M=[["Rec: Bit depth",()=>cfg.bits+"-bit",()=>cfg.bits=cfg.bits===24?16:24],
+["Rec: File prefix",()=>cfg.prefix,()=>cfg.prefix=(prompt("Префікс файлу",cfg.prefix)||cfg.prefix).replace(/[^\w-]/g,"")],
+["Rec: Scene",()=>cfg.scene,()=>cfg.scene=prompt("Scene",cfg.scene)||cfg.scene],
+["Rec: Next take",()=>P(cfg.take,3),()=>cfg.take=Math.max(1,parseInt(prompt("Take №",cfg.take))||cfg.take)],
+["Rec: Sample rate",()=>ctx?ctx.sampleRate+" Hz":"–",()=>alert("Частоту дискретизації задає iPhone/пристрій (44.1 або 48 кГц).")],
+["Limiter: Release",()=>cfg.rel+" s",()=>{cfg.rel=nxt([.2,.5,1,2],cfg.rel);I.forEach((c,i)=>setIn(i))}],
+["Timecode: Frame rate",()=>cfg.fps.toUpperCase(),()=>cfg.fps=nxt(FL,cfg.fps)],
+["Timecode: Mode",()=>MODES[cfg.mode],()=>cfg.mode=nxt(Object.keys(MODES),cfg.mode)],
+["Timecode: Jam (set TC)",()=>tcStr(tcMs()),()=>{const v=prompt("TC ГГ:ХХ:СС:КК",tcStr(tcMs()));const m=v&&v.match(/^(\d+)[:;](\d+)[:;](\d+)[:;](\d+)$/);if(m){tcAcc=((+m[1]*60+ +m[2])*60+ +m[3])*1000+(+m[4])/FD[cfg.fps][1]*1000;if(cfg.mode==="tod")cfg.mode="free"}}],
+["Input: Device",()=>(devs.find(d=>d.deviceId===stream.getAudioTracks()[0].getSettings().deviceId)||{label:"Default"}).label.slice(0,22),async()=>{const i=devs.findIndex(d=>d.deviceId===stream.getAudioTracks()[0].getSettings().deviceId);if(!rec&&devs.length)await startAudio(devs[(i+1)%devs.length].deviceId)}],
+["Info: Phantom 48 V / аналог. виходи",()=>"hardware",()=>alert("Phantom, AES і лінійні виходи — це апаратні функції. Їх забезпечує зовнішній мікрофонний передпідсилювач/інтерфейс.")]];
+async function mi(i){await M[i][2]();sv();R()}
+function R(){const s=$("scr");$("cam").style.display=tab==="cam"?"block":"none";$("gr").style.display=cfg.grid?"block":"none";
+ if(tab==="main")s.innerHTML=`<h4>TRACKS · натисніть, щоб увімкнути/вимкнути запис</h4><div class="tg">${TN.map((n,t)=>`<button class="${tarm[t]?"on":""}" onclick="tg(${t})">${n}<small>IN ${trLab(t)}</small></button>`).join("")}</div><p style="color:#8a9199;font-size:12px">Файл: polywav ${tarm.filter(Boolean).length} tr · ${cfg.bits}-bit · BWF + iXML. Track L/R також йдуть на навушники (MON).</p>`;
+ if(tab==="inp")s.innerHTML=I.map((c,i)=>`<div class="ic"><b>IN ${i+1}</b> <span id="gv${i}" style="float:right">${c.gain.toFixed(1)} dB</span><input type="range" min="-20" max="30" step="0.5" value="${c.gain}" oninput="ig(${i},this.value)"><div class="r2"><select onchange="ih(${i},this.value)">${HP.map(h=>`<option value="${h}" ${h===c.hpf?"selected":""}>${h?"HPF "+h+" Hz":"HPF Off"}</option>`).join("")}</select><button class="${c.lim?"on":""}" onclick="il(${i})">LIM</button><button class="${c.phase?"on":""}" onclick="ip(${i})">Ø</button></div><div class="rt">${TN.map((n,t)=>`<button class="${c.route[t]?"on":""}" onclick="ir(${i},${t})">${n}</button>`).join("")}</div></div>`).join("")||"<h4>Немає входів</h4>";
+ if(tab==="menu")s.innerHTML=`<h4>SETUP MENU</h4>`+M.map((m,i)=>`<div class="mi" onclick="mi(${i})"><span>${i+1}) ${m[0]}</span><span>${m[1]()}</span></div>`).join("");
+ if(tab==="cam"){const st=vtr?vtr.getSettings():{},L={zoom:"ZOOM",focusDistance:"FOCUS",exposureCompensation:"EV",exposureTime:"SHUTTER",iso:"ISO",colorTemperature:"WB (K)"};
+  const ctl=Object.keys(L).filter(k=>caps[k]&&caps[k].max!==undefined).map(k=>{const c=caps[k],v=st[k]??c.min;return `<div class="cs"><label><span>${L[k]}</span><span id="cv${k}">${(+v).toFixed(k==="zoom"?1:0)}</span></label><input type="range" min="${c.min}" max="${c.max}" step="${c.step||1}" value="${v}" oninput="cset('${k}',this.value)"></div>`}).join("");
+  s.innerHTML=`<div class="r2" style="margin-bottom:6px"><button class="${cs?"on":""}" style="flex:1;padding:10px" onclick="${cs?"camOff()":"camOn()"}">${cs?"Вимкнути камеру":"Увімкнути камеру"}</button><button style="flex:1" onclick="cfg.face=cfg.face==='user'?'environment':'user';sv();cs?camOn():R()">${cfg.face==="user"?"Фронтальна":"Основна"}</button></div>
+  <div class="r2"><select onchange="cfg.res=+this.value;sv();cs&&camOn()">${[720,1080,2160].map(h=>`<option value="${h}" ${h===cfg.res?"selected":""}>${h===2160?"4K":h+"p"}</option>`).join("")}</select><select onchange="cfg.vbr=+this.value;sv()">${[8,16,25,50].map(b=>`<option value="${b}" ${b===cfg.vbr?"selected":""}>${b} Mbps</option>`).join("")}</select><button class="${cfg.grid?"on":""}" onclick="cfg.grid=cfg.grid?0:1;sv();R()">GRID</button></div>
+  <p style="color:#8a9199;font-size:12px">${cs?"Фактично: "+st.width+"×"+st.height+" @ "+Math.round(st.frameRate||0)+" fps":"Камера вимкнена"}. Частота кадрів береться з Timecode: Frame rate.</p>${ctl||(cs?"<p style='color:#8a9199;font-size:12px'>Цей браузер не дає ручних налаштувань (zoom, фокус, ISO, витримка): вони є в Chrome на більшості Android. На iPhone Safari керує експозицією й фокусом автоматично.</p>":"")}${cs&&ctl?'<button style="width:100%;padding:10px;margin-top:6px" onclick="cauto()">AUTO (фокус, експозиція, WB)</button>':""}`}
+ if(tab==="files")s.innerHTML=`<h4>FILES</h4>`+(files.map((f,i)=>`<div class="fi"><b>${f.name}</b><br><small>TC ${f.tc} · ${f.n} tr · ${f.bits}-bit · ${f.dur}s · ${f.mb} MB</small><button onclick="sh(${i})">Аудіо (polywav): поділитися</button>${f.vblob?`<button onclick="shv(${i})">Відео: ${f.vname}</button>`:""}</div>`).join("")||"<small>Записів ще немає</small>")}
+async function sh(i){const f=files[i];try{await navigator.share({files:[new File([f.blob],f.name,{type:"audio/wav"})]})}catch(e){}}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{tab=b.dataset.t;document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("on",x===b));R()});
+$("go").onclick=async()=>{try{await startAudio();$("start").remove()}catch(e){$("err").textContent="Немає доступу до мікрофона: "+e.message}};
+navigator.mediaDevices.ondevicechange=async()=>{if(!ctx||rec)return;try{const ds=(await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind==="audioinput"&&d.label);const x=ds.find(d=>!/iphone|built|вбудован/i.test(d.label));await startAudio(x?x.deviceId:undefined)}catch(e){}};
+$("bMon").onclick=()=>{monOn=!monOn;$("bMon").classList.toggle("on",monOn);if(mon)mon.gain.value=monOn?1:0};
+$("bPause").onclick=()=>{if(!rec)return;paused=!paused;if(rec.vr&&rec.vr.state!=="inactive")paused?rec.vr.pause():rec.vr.resume()};
+$("rec").onclick=()=>{if(!ctx||rec)return;const arm=tarm.map((a,t)=>a?t:-1).filter(t=>t>=0);if(!arm.length){alert("Увімкніть хоча б один трек");return}
+ blocks=[];frames=0;paused=false;rec={arm,name:fname(),take:cfg.take,ms:tcMs(),tc:tcStr(tcMs()),fps:cfg.fps,bits:cfg.bits};$("rec").classList.add("on");
+ if(cs){const r=rec,mt=MediaRecorder.isTypeSupported("video/mp4")?"video/mp4":"video/webm";r.vch=[];r.vmt=mt;
+  try{r.vr=new MediaRecorder(new MediaStream([vtr,...dest.stream.getAudioTracks()]),{mimeType:mt,videoBitsPerSecond:cfg.vbr*1e6});r.vr.ondataavailable=e=>{if(e.data.size)r.vch.push(e.data)};r.vr.start(1000)}catch(e){alert("Відео-запис: "+e.message)}}};
+$("bStop").onclick=()=>{if(!rec)return;const r=rec;rec=null;$("rec").classList.remove("on");const b=makeWav(r);cfg.take++;sv();
+ const fe={name:r.name,blob:b,tc:r.tc,n:r.arm.length,bits:r.bits,dur:Math.round(frames/ctx.sampleRate),mb:(b.size/1048576).toFixed(1)};files.unshift(fe);blocks=[];R();
+ if(r.vr&&r.vr.state!=="inactive"){r.vr.onstop=()=>{fe.vblob=new Blob(r.vch,{type:r.vmt});fe.vname=r.name.replace(".wav",r.vmt==="video/mp4"?".mp4":".webm");R()};r.vr.stop()}};
+function makeWav(r){const n=r.arm.length,sr=ctx.sampleRate,by=r.bits/8,dl=frames*n*by,E=new TextEncoder();
+ const ck=(id,len)=>{const d=new DataView(new ArrayBuffer(8));for(let i=0;i<4;i++)d.setUint8(i,id.charCodeAt(i));d.setUint32(4,len,true);return d.buffer};
+ const fm=new DataView(new ArrayBuffer(16));fm.setUint16(0,1,true);fm.setUint16(2,n,true);fm.setUint32(4,sr,true);fm.setUint32(8,sr*n*by,true);fm.setUint16(12,n*by,true);fm.setUint16(14,r.bits,true);
+ const bx=new DataView(new ArrayBuffer(602)),w=(o,s)=>{for(let i=0;i<s.length;i++)bx.setUint8(o+i,s.charCodeAt(i))},d=new Date(),tr=Math.round(r.ms/1000*sr);
+ w(0,"Field Mixer take "+r.take);w(256,"FieldMixer");w(320,r.name);w(352,d.getFullYear()+"-"+P(d.getMonth()+1)+"-"+P(d.getDate()));w(362,P(d.getHours())+":"+P(d.getMinutes())+":"+P(d.getSeconds()));
+ bx.setUint32(372,tr%4294967296,true);bx.setUint32(376,Math.floor(tr/4294967296),true);bx.setUint16(380,1,true);
+ const rate={"23.976":"24000/1001","29.97":"30000/1001","29.97df":"30000/1001"}[r.fps]||r.fps+"/1";
+ let ix=`<?xml version="1.0" encoding="UTF-8"?><BWFXML><IXML_VERSION>1.5</IXML_VERSION><PROJECT>FieldMixer</PROJECT><TAPE>${esc(cfg.prefix)}</TAPE><SCENE>${esc(cfg.scene)}</SCENE><TAKE>${r.take}</TAKE><SPEED><TIMECODE_RATE>${rate}</TIMECODE_RATE><TIMECODE_FLAG>${r.fps==="29.97df"?"DF":"NDF"}</TIMECODE_FLAG><FILE_SAMPLE_RATE>${sr}</FILE_SAMPLE_RATE><AUDIO_BIT_DEPTH>${r.bits}</AUDIO_BIT_DEPTH><TIMESTAMP_SAMPLES_SINCE_MIDNIGHT_HI>${Math.floor(tr/4294967296)}</TIMESTAMP_SAMPLES_SINCE_MIDNIGHT_HI><TIMESTAMP_SAMPLES_SINCE_MIDNIGHT_LO>${tr%4294967296}</TIMESTAMP_SAMPLES_SINCE_MIDNIGHT_LO></SPEED><TRACK_LIST><TRACK_COUNT>${n}</TRACK_COUNT>${r.arm.map((t,k)=>`<TRACK><CHANNEL_INDEX>${k+1}</CHANNEL_INDEX><INTERLEAVE_INDEX>${k+1}</INTERLEAVE_INDEX><NAME>${TN[t]}</NAME></TRACK>`).join("")}</TRACK_LIST></BWFXML>`;
+ let ixb=E.encode(ix);if(ixb.length%2){ix+=" ";ixb=E.encode(ix)}
+ const pad=new Uint8Array(1),riff=new DataView(new ArrayBuffer(12));riff.setUint32(4,4+24+610+8+ixb.length+8+dl+(dl%2),true);
+ "RIFF".split("").forEach((c,i)=>riff.setUint8(i,c.charCodeAt(0)));"WAVE".split("").forEach((c,i)=>riff.setUint8(8+i,c.charCodeAt(0)));
+ return new Blob([riff.buffer,ck("fmt ",16),fm.buffer,ck("bext",602),bx.buffer,ck("iXML",ixb.length),ixb,ck("data",dl),...blocks,...(dl%2?[pad]:[])],{type:"audio/wav"})}
+R();
+if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+</script></body></html>
